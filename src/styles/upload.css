@@ -248,6 +248,7 @@
   font-weight: 600;
   z-index: 1;
   font-size: var(--font-size-sm);
+  margin-left: -8px;
 }
 
 .price-input {
