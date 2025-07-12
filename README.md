@@ -1,4 +1,20 @@
-# Getting Started with Create React App
+# Art Gallery dApp
+
+A decentralized application for artists to showcase and sell their artwork using Ethereum blockchain.
+
+## Features
+
+- Artist registration
+- Artwork upload with IPFS integration
+- Gallery view of all artworks
+- Purchase functionality for buying artwork
+- Tipping system for supporting artists
+
+## Prerequisites
+
+- Node.js and npm
+- MetaMask browser extension
+- Truffle (for contract deployment)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -39,15 +55,45 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
+## Smart Contract Integration
+
+The application uses the ArtGallery smart contract which provides the following functionality:
+
+- Artist registration
+- Artwork upload and management
+- Purchase functionality
+- Tipping system
+
+### Deploying the Contract
+
+Make sure you have Truffle installed:
+
+```bash
+npm install -g truffle
+```
+
+Compile and deploy the contract:
+
+```bash
+truffle compile
+truffle migrate --network development
+```
+
+After deployment, update the contract address in `src/App.js` with your deployed contract address.
+
+## IPFS Integration
+
+To upload images to IPFS, you can use services like:
+- Pinata (https://pinata.cloud/)
+- IPFS Desktop (https://github.com/ipfs/ipfs-desktop)
+
+After uploading an image to IPFS, use the returned hash when uploading artwork through the dApp.
+
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
 ### Analyzing the Bundle Size
 
