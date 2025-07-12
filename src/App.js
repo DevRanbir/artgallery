@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import './styles/main.css';
 
 // Import components
-import RegisterArtist from './components/RegisterArtist';
-import UploadArtwork from './components/UploadArtwork';
-import Gallery from './components/Gallery';
+import Navigation from './components/Navigation';
+import Footer from './components/Footer';
+import LoadingPage from './components/LoadingPage';
+
+// Import pages
+import HomePage from './pages/HomePage';
+import GalleryPage from './pages/GalleryPage';
+import MyCollectionPage from './pages/MyCollectionPage';
+import RegisterPage from './pages/RegisterPage';
+import UploadPage from './pages/UploadPage';
 
 // Simplified ABI for ArtGallery contract
 const ArtGalleryABI = [
@@ -184,53 +192,99 @@ function App() {
   }
 
   return (
-    <div className="app-container">
-      <header>
-        <h1>Art Gallery dApp</h1>
-        <div className="account-info">
-          <p>Connected Account: {account}</p>
-          <p>{networkInfo}</p>
-          {isArtist && <p>Artist Name: {artistName}</p>}
-        </div>
-      </header>
-
-      <main>
-        {!isArtist && (
-          <section className="register-section">
-            <h2>Register as an Artist</h2>
-            <RegisterArtist 
-              contract={contract} 
+    <Router>
+      <div className="app-container">
+        {loading ? (
+          <LoadingPage />
+        ) : error ? (
+          <div className="error-page">
+            <div className="error-content">
+              <h2>Connection Error</h2>
+              <p>{error}</p>
+              <button className="btn-primary" onClick={() => window.location.reload()}>
+                Retry Connection
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <Navigation 
               account={account} 
-              setIsArtist={setIsArtist}
-              setArtistName={setArtistName}
+              isArtist={isArtist} 
+              artistName={artistName}
             />
-          </section>
+
+            <main>
+              <Routes>
+                <Route 
+                  path="/" 
+                  element={
+                    <HomePage 
+                      account={account} 
+                      isArtist={isArtist} 
+                      artistName={artistName} 
+                      networkInfo={networkInfo}
+                    />
+                  } 
+                />
+                
+                <Route 
+                  path="/gallery" 
+                  element={
+                    <GalleryPage 
+                      contract={contract} 
+                      account={account} 
+                      isArtist={isArtist} 
+                    />
+                  } 
+                />
+                
+                <Route 
+                  path="/collection" 
+                  element={
+                    <MyCollectionPage 
+                      contract={contract} 
+                      account={account} 
+                      isArtist={isArtist} 
+                    />
+                  } 
+                />
+                
+                <Route 
+                  path="/register" 
+                  element={
+                    isArtist 
+                      ? <Navigate to="/upload" replace /> 
+                      : <RegisterPage 
+                          contract={contract} 
+                          account={account} 
+                          setIsArtist={setIsArtist}
+                          setArtistName={setArtistName}
+                        />
+                  } 
+                />
+                
+                <Route 
+                  path="/upload" 
+                  element={
+                    !isArtist 
+                      ? <Navigate to="/register" replace /> 
+                      : <UploadPage 
+                          contract={contract} 
+                          account={account}
+                        />
+                  } 
+                />
+                
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </main>
+
+            <Footer />
+          </>
         )}
-
-        {isArtist && (
-          <section className="upload-section">
-            <h2>Upload Artwork</h2>
-            <UploadArtwork 
-              contract={contract} 
-              account={account} 
-            />
-          </section>
-        )}
-
-        <section className="gallery-section">
-          <h2>Art Gallery</h2>
-          <Gallery 
-            contract={contract} 
-            account={account} 
-            isArtist={isArtist}
-          />
-        </section>
-      </main>
-
-      <footer>
-        <p>&copy; {new Date().getFullYear()} Art Gallery dApp</p>
-      </footer>
-    </div>
+      </div>
+    </Router>
   );
 }
 

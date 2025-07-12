@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const RegisterArtist = ({ contract, account, setIsArtist, setArtistName }) => {
+const RegisterArtist = ({ contract, account, setIsArtist, setArtistName, onSuccess }) => {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -28,6 +28,11 @@ const RegisterArtist = ({ contract, account, setIsArtist, setArtistName }) => {
       setArtistName(name);
       setSuccess(true);
       setName('');
+      
+      // Call the onSuccess callback if provided
+      if (typeof onSuccess === 'function') {
+        onSuccess();
+      }
     } catch (err) {
       console.error('Error registering as artist:', err);
       setError(err.message || 'Error registering as artist. Please try again.');
@@ -37,30 +42,45 @@ const RegisterArtist = ({ contract, account, setIsArtist, setArtistName }) => {
   };
 
   return (
-    <div className="register-artist-container">
+    <div className="form-container">
       {success ? (
-        <div className="success-message">
-          <p>Successfully registered as an artist!</p>
+        <div className="alert alert-success">
+          <h3>🎨 Welcome to ArtBlocks!</h3>
+          <p>Successfully registered as an artist! You can now upload your artwork.</p>
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
+          <h3>✨ Become an Artist</h3>
           <div className="form-group">
             <label htmlFor="artistName">Your Artist Name:</label>
             <input
               type="text"
               id="artistName"
+              className="form-control"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your artist name"
+              placeholder="Enter your unique artist name"
               disabled={loading}
               required
             />
           </div>
           
-          {error && <div className="error-message">{error}</div>}
+          {error && <div className="alert alert-error">{error}</div>}
           
-          <button type="submit" disabled={loading || !name.trim()}>
-            {loading ? 'Registering...' : 'Register as Artist'}
+          <button 
+            type="submit" 
+            className="btn-primary"
+            disabled={loading || !name.trim()}
+            style={{ width: '100%' }}
+          >
+            {loading ? (
+              <span className="loading-indicator">
+                <span className="loading-spinner"></span>
+                Registering...
+              </span>
+            ) : (
+              'Register as Artist'
+            )}
           </button>
         </form>
       )}

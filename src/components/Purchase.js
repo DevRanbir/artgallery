@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Purchase = ({ artworkId, price, contract }) => {
+const Purchase = ({ artworkId, price, contract, account, className = "" }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -19,6 +19,15 @@ const Purchase = ({ artworkId, price, contract }) => {
       // Wait for the transaction to be mined
       await tx.wait();
 
+      // Store purchase in localStorage for tracking in collection page
+      if (account) {
+        const userPurchases = JSON.parse(localStorage.getItem(`purchases_${account}`) || '[]');
+        if (!userPurchases.includes(artworkId)) {
+          userPurchases.push(artworkId);
+          localStorage.setItem(`purchases_${account}`, JSON.stringify(userPurchases));
+        }
+      }
+
       // Show success message
       setSuccess(true);
     } catch (err) {
@@ -31,8 +40,8 @@ const Purchase = ({ artworkId, price, contract }) => {
 
   if (success) {
     return (
-      <div className="purchase-success">
-        <p>Artwork purchased successfully!</p>
+      <div className="alert alert-success">
+        Artwork purchased successfully! 🎉
       </div>
     );
   }
@@ -40,14 +49,22 @@ const Purchase = ({ artworkId, price, contract }) => {
   return (
     <div className="purchase-container">
       <button 
-        className="purchase-button" 
+        className={`btn-primary ${className}`} 
         onClick={handlePurchase} 
         disabled={loading}
+        style={{ width: '100%' }}
       >
-        {loading ? 'Processing...' : 'Purchase'}
+        {loading ? (
+          <span className="loading-indicator">
+            <span className="loading-spinner"></span>
+            Processing...
+          </span>
+        ) : (
+          'Buy Now'
+        )}
       </button>
       
-      {error && <div className="error-message">{error}</div>}
+      {error && <div className="alert alert-error">{error}</div>}
     </div>
   );
 };
