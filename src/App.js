@@ -23,6 +23,7 @@ const ArtGalleryABI = [
   // Artwork management
   "function uploadArtwork(string memory _title, string memory _description, string memory _ipfsHash, uint _price) public",
   "function purchaseArtwork(uint _artworkId) public payable",
+  "function removeArtwork(uint _artworkId) public payable",
   "function tipArtist(address _artist) public payable",
   
   // Getter functions
@@ -35,6 +36,7 @@ const ArtGalleryABI = [
   "event ArtistRegistered(address artist, string name)",
   "event ArtworkUploaded(uint artworkId, address artist)",
   "event ArtworkPurchased(uint artworkId, address buyer)",
+  "event ArtworkRemoved(uint artworkId, address artist)",
   "event Tipped(address artist, address tipper, uint amount)"
 ];
 
@@ -77,7 +79,7 @@ function App() {
         console.log('Connected to network:', network);
 
         // Contract address - REPLACE WITH YOUR DEPLOYED CONTRACT ADDRESS
-        const contractAddress = '0x9EE63927bDCf70820dCd4a1a6E25475Db14eFe7A';
+        const contractAddress = '0x15A0812cD344ed83F8e2562Ef8FA18bdab2256A0';
         
         // Verify contract exists at the address
         const code = await provider.getCode(contractAddress);

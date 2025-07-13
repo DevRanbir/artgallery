@@ -24,6 +24,7 @@ contract ArtGallery {
     event ArtistRegistered(address artist, string name);
     event ArtworkUploaded(uint artworkId, address artist);
     event ArtworkPurchased(uint artworkId, address buyer);
+    event ArtworkRemoved(uint artworkId, address artist);
     event Tipped(address artist, address tipper, uint amount);
 
     modifier onlyRegisteredArtist() {
@@ -83,6 +84,39 @@ contract ArtGallery {
         
         payable(_artist).transfer(msg.value);
         emit Tipped(_artist, msg.sender, msg.value);
+    }
+    
+    function removeArtwork(uint _artworkId) public payable {
+        require(_artworkId > 0 && _artworkId <= artworkCount, "Invalid artwork ID");
+        
+        Artwork storage art = artworks[_artworkId];
+        require(art.artist == msg.sender, "Only the artist can remove their artwork");
+        require(!art.isSold, "Cannot remove sold artwork");
+        require(art.price > 0, "Artwork price must be greater than 0");
+        
+        // Calculate 5% removal fee BEFORE modifying the artwork
+        uint removalFee = (art.price * 5) / 100;
+        
+        // Ensure minimum fee of 1 wei to avoid zero fee issues
+        if (removalFee == 0) {
+            removalFee = 1;
+        }
+        
+        require(msg.value >= removalFee, "Insufficient removal fee");
+        
+        // Mark artwork as removed - set price to 0 and mark as sold to hide it
+        art.price = 0;
+        art.isSold = true;
+        
+        // Handle refund of excess payment
+        uint refundAmount = msg.value - removalFee;
+        if (refundAmount > 0) {
+            (bool refundSuccess, ) = payable(msg.sender).call{value: refundAmount}("");
+            require(refundSuccess, "Refund failed");
+        }
+        
+        // The removal fee stays in the contract as platform fee
+        emit ArtworkRemoved(_artworkId, msg.sender);
     }
 
     // Split the getter into multiple functions to avoid stack too deep errors

@@ -5,6 +5,8 @@
 
 /* Import Component Styles */
 @import './navigation.css';
+@import './artwork-card.css';
+@import './remove-artwork.css';
 
 /* Import Page-Specific Styles */
 @import './home.css';
@@ -70,51 +72,146 @@
   font-size: var(--font-size-sm);
 }
 
-/* Tip Component Styles */
-.tip-container {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
-  margin-top: var(--space-sm);
-  animation: slideDown var(--transition-normal) ease-out;
+/* Modal Overlay Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-overlay);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  animation: fadeIn var(--transition-normal) ease-out;
 }
 
-@keyframes slideDown {
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
-.tip-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-md);
+.modal-content {
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2xl);
+  border: 1px solid var(--border-color);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideIn var(--transition-normal) ease-out;
 }
 
-.tip-title {
-  font-size: var(--font-size-sm);
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Tip Component Styles */
+.tip-container {
+  padding: var(--space-2xl);
+}
+
+.tip-container h4 {
+  font-size: var(--font-size-xl);
   font-weight: 600;
   color: var(--text-primary);
+  margin-bottom: var(--space-xl);
+  text-align: center;
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  justify-content: center;
+  gap: var(--space-sm);
 }
 
 .tip-form {
   display: flex;
-  gap: var(--space-sm);
-  align-items: flex-end;
+  flex-direction: column;
+  gap: var(--space-lg);
 }
 
-.tip-input-group {
+.tip-form .form-group {
+  margin-bottom: 0;
+}
+
+.tip-form .form-group label {
+  display: block;
+  margin-bottom: var(--space-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+}
+
+.tip-form .form-control {
+  width: 100%;
+  padding: var(--space-lg);
+  font-size: var(--font-size-base);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.tip-form .form-control:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background-color: var(--bg-primary);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+  transform: translateY(-1px);
+}
+
+.tip-form .form-control::placeholder {
+  color: var(--text-tertiary);
+}
+
+.inr-equivalent {
+  margin-top: var(--space-xs);
+  color: var(--primary-color);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  text-align: center;
+}
+
+.tip-form .btn-secondary {
+  width: 100%;
+  padding: var(--space-lg) var(--space-xl);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+.tip-success-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+.tip-success-actions button {
   flex: 1;
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-md);
 }
 
 .tip-input {
@@ -159,24 +256,66 @@
 
 /* Purchase Component Styles */
 .purchase-container {
-  width: 100%;
+  padding: var(--space-2xl);
+}
+
+.purchase-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.purchase-title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.purchase-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.purchase-details {
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  border: 1px solid var(--border-light);
+}
+
+.purchase-price {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  text-align: center;
+}
+
+.purchase-price-eth {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.purchase-price-inr {
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .purchase-button {
   width: 100%;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: white;
-  border: none;
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
+  padding: var(--space-lg) var(--space-xl);
+  font-size: var(--font-size-base);
   font-weight: 600;
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+  border: none;
   cursor: pointer;
-  transition: all var(--transition-normal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: var(--text-inverse);
+  box-shadow: var(--shadow-md);
 }
 
 .purchase-button:hover:not(:disabled) {
@@ -190,9 +329,17 @@
   transform: none;
 }
 
-.purchase-button.btn-small {
-  padding: var(--space-xs) var(--space-sm);
-  font-size: var(--font-size-xs);
+.purchase-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+.purchase-actions button {
+  flex: 1;
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-md);
 }
 
 .loading-indicator {

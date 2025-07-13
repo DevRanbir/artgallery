@@ -100,56 +100,7 @@ button:disabled {
   gap: 20px;
 }
 
-.artwork-card {
-  border: 1px solid #eee;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  transition: transform 0.3s;
-}
-
-.artwork-card:hover {
-  transform: translateY(-5px);
-}
-
-.artwork-image img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
-
-.artwork-details {
-  padding: 15px;
-}
-
-.artwork-details h3 {
-  margin-top: 0;
-  margin-bottom: 10px;
-}
-
-.artwork-details p {
-  margin: 5px 0;
-}
-
-.artwork-details .artist {
-  color: #666;
-  font-style: italic;
-}
-
-.artwork-details .price {
-  font-weight: bold;
-  color: #4CAF50;
-}
-
-.artwork-details .status {
-  font-weight: bold;
-}
-
-.artwork-actions {
-  padding: 0 15px 15px;
-  display: flex;
-  justify-content: space-between;
-}
+/* Artwork card styles moved to dedicated artwork-card.css file */
 
 /* Purchase Component */
 .purchase-button {

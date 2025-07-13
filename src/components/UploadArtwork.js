@@ -4,14 +4,14 @@ import { ethers } from 'ethers';
 const UploadArtwork = ({ contract, account }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [imageFile, setImageFile] = useState(null);
+  const [imageUrl, setImageUrl] = useState('');
   const [imagePreview, setImagePreview] = useState('');
-  const [ipfsHash, setIpfsHash] = useState('');
   const [priceInr, setPriceInr] = useState(''); // Changed to INR as primary
   const [ethToInr, setEthToInr] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
 
   // Fetch ETH to INR conversion rate
   useEffect(() => {
@@ -37,42 +37,52 @@ const UploadArtwork = ({ contract, account }) => {
 
 
 
-  // Handle image file upload
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      setError('Please select a valid image file');
-      return;
-    }
-
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      setError('Image size must be less than 10MB');
-      return;
-    }
-
-    setImageFile(file);
+  // Handle image URL input and validation
+  const handleImageUrlChange = async (url) => {
+    setImageUrl(url);
     setError('');
+    
+    if (!url.trim()) {
+      setImagePreview('');
+      return;
+    }
 
-    // Create preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const base64Image = e.target.result;
-      setImagePreview(base64Image);
-      
-      // Save to localStorage with artwork ID (using timestamp for uniqueness)
-      const artworkId = `artwork_${Date.now()}`;
-      localStorage.setItem(artworkId, base64Image);
-      
-      // Generate a mock IPFS hash for demonstration
-      // In real implementation, you would upload to IPFS here
-      const mockHash = `Qm${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
-      setIpfsHash(mockHash);
+    // Basic URL validation
+    try {
+      new URL(url);
+    } catch {
+      setError('Please enter a valid URL');
+      setImagePreview('');
+      return;
+    }
+
+    // Check if it's likely an image URL
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+    const isImageUrl = imageExtensions.some(ext => 
+      url.toLowerCase().includes(ext) || 
+      url.includes('image') || 
+      url.includes('img') ||
+      url.includes('photo')
+    );
+
+    if (!isImageUrl && !url.includes('unsplash') && !url.includes('imgur') && !url.includes('cloudinary')) {
+      setError('URL should point to an image file or image hosting service');
+    }
+
+    // Try to load the image to validate it
+    setImageLoading(true);
+    const img = new Image();
+    img.onload = () => {
+      setImagePreview(url);
+      setImageLoading(false);
+      setError('');
     };
-    reader.readAsDataURL(file);
+    img.onerror = () => {
+      setError('Unable to load image from this URL. Please check the URL and try again.');
+      setImagePreview('');
+      setImageLoading(false);
+    };
+    img.src = url;
   };
 
 
@@ -86,8 +96,8 @@ const UploadArtwork = ({ contract, account }) => {
     try {
       // Validate inputs
       if (!title.trim()) throw new Error('Title cannot be empty');
-      if (!imageFile) throw new Error('Please upload an artwork image');
-      if (!ipfsHash.trim()) throw new Error('Image processing failed, please try uploading again');
+      if (!imageUrl.trim()) throw new Error('Please provide an image URL');
+      if (!imagePreview) throw new Error('Please wait for the image to load or check the URL');
       if (!priceInr || parseFloat(priceInr) <= 0) throw new Error('Price must be greater than 0');
 
       // Convert INR price to ETH, then to wei
@@ -95,10 +105,11 @@ const UploadArtwork = ({ contract, account }) => {
       const priceInWei = ethers.utils.parseEther(priceInEth);
 
       // Call the contract method to upload artwork
+      // Now we pass the image URL directly instead of IPFS hash
       const tx = await contract.uploadArtwork(
         title,
         description,
-        ipfsHash,
+        imageUrl, // Using image URL directly
         priceInWei
       );
 
@@ -108,9 +119,8 @@ const UploadArtwork = ({ contract, account }) => {
       // Reset form and show success message
       setTitle('');
       setDescription('');
-      setImageFile(null);
+      setImageUrl('');
       setImagePreview('');
-      setIpfsHash('');
       setPriceInr('');
       setSuccess(true);
     } catch (err) {
@@ -151,42 +161,53 @@ const UploadArtwork = ({ contract, account }) => {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="upload-form-grid">
-          {/* Left Column - Image Upload */}
+          {/* Left Column - Image URL Input */}
           <div className="upload-left">
             <div className="form-section">
               <h3 className="section-title">Artwork Image</h3>
               <div className={`image-upload-area ${imagePreview ? 'has-image' : ''}`}>
                 {!imagePreview ? (
-                  <>
+                  <div className="url-input-container">
+                    <div className="upload-icon-large">🔗</div>
+                    <div className="upload-text">Enter Image URL</div>
+                    <div className="upload-hint">Direct link to your artwork image</div>
                     <input
-                      type="file"
-                      id="imageUpload"
-                      accept="image/*"
-                      onChange={handleImageUpload}
+                      type="url"
+                      className="form-input url-input"
+                      value={imageUrl}
+                      onChange={(e) => handleImageUrlChange(e.target.value)}
+                      placeholder="https://example.com/your-artwork.jpg"
                       disabled={loading}
-                      style={{ display: 'none' }}
                     />
-                    <label htmlFor="imageUpload" className="upload-dropzone">
-                      <div className="upload-icon-large">📁</div>
-                      <div className="upload-text">Drop image here or click to upload</div>
-                      <div className="upload-hint">PNG, JPG, GIF up to 10MB</div>
-                    </label>
-                  </>
+                    {imageLoading && (
+                      <div className="image-loading">
+                        <div className="loading-spinner"></div>
+                        <span>Loading image...</span>
+                      </div>
+                    )}
+                    <div className="url-examples">
+                      <p className="examples-title">Example sources:</p>
+                      <ul className="examples-list">
+                        <li>Unsplash, Imgur, Google Drive</li>
+                        <li>Your personal website or blog</li>
+                        <li>Cloud storage (Dropbox, OneDrive)</li>
+                      </ul>
+                    </div>
+                  </div>
                 ) : (
                   <div className="image-preview-container">
                     <img src={imagePreview} alt="Preview" className="image-preview" />
                     <div className="image-overlay">
                       <div className="image-info">
-                        <strong>{imageFile?.name}</strong>
-                        <span>{(imageFile?.size / 1024 / 1024).toFixed(2)} MB</span>
+                        <strong>Image Preview</strong>
+                        <span className="image-url-display">{imageUrl.length > 40 ? `${imageUrl.substring(0, 40)}...` : imageUrl}</span>
                       </div>
                       <button 
                         type="button" 
                         className="btn-remove"
                         onClick={() => {
-                          setImageFile(null);
+                          setImageUrl('');
                           setImagePreview('');
-                          setIpfsHash('');
                         }}
                       >
                         ✕
@@ -263,14 +284,17 @@ const UploadArtwork = ({ contract, account }) => {
                 </div>
 
                 <div className="form-field">
-                  <label className="form-label">Generated Hash</label>
+                  <label className="form-label">Image URL</label>
                   <input
-                    type="text"
-                    className="form-input hash-input"
-                    value={ipfsHash}
+                    type="url"
+                    className="form-input url-display"
+                    value={imageUrl}
                     disabled
-                    placeholder="Upload image to generate"
+                    placeholder="Enter image URL above to see it here"
                   />
+                  <div className="field-hint">
+                    The direct URL to your artwork image
+                  </div>
                 </div>
               </div>
 
@@ -280,7 +304,7 @@ const UploadArtwork = ({ contract, account }) => {
                 <button 
                   type="submit" 
                   className="btn btn-upload"
-                  disabled={loading || !title.trim() || !imageFile || !priceInr}
+                  disabled={loading || !title.trim() || !imageUrl.trim() || !imagePreview || !priceInr}
                 >
                   {loading ? (
                     <>

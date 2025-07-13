@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
-const Tip = ({ artistAddress, artistName, contract, compact = false }) => {
+const Tip = ({ artistAddress, artistName, contract, compact = false, onClose }) => {
   const [tipAmount, setTipAmount] = useState('');
   const [ethToInr, setEthToInr] = useState(250000);
   const [loading, setLoading] = useState(false);
@@ -54,6 +54,13 @@ const Tip = ({ artistAddress, artistName, contract, compact = false }) => {
       // Reset form and show success message
       setTipAmount('');
       setSuccess(true);
+      
+      // Auto-close modal after success (optional)
+      if (onClose) {
+        setTimeout(() => {
+          onClose();
+        }, 2000); // Close after 2 seconds
+      }
     } catch (err) {
       console.error('Error tipping artist:', err);
       setError(err.message || 'Error tipping artist. Please try again.');
@@ -63,61 +70,73 @@ const Tip = ({ artistAddress, artistName, contract, compact = false }) => {
   };
 
   return (
-    <div className="tip-container">
-      {success ? (
-        <div className="alert alert-success">
-          <p>Tip sent successfully! 💰</p>
-          <button 
-            className="btn-secondary" 
-            onClick={() => setSuccess(false)}
-            style={{ width: '100%', marginTop: '0.5rem' }}
-          >
-            Send Another Tip
-          </button>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="tip-container">
+          {success ? (
+            <div className="alert alert-success">
+              <p>Tip sent successfully! 💰</p>
+              <div className="tip-success-actions">
+                <button 
+                  className="btn-secondary" 
+                  onClick={() => setSuccess(false)}
+                >
+                  Send Another Tip
+                </button>
+                {onClose && (
+                  <button 
+                    className="btn-primary" 
+                    onClick={onClose}
+                  >
+                    Close
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={handleTip} className="tip-form">
+              <h4>💝 Tip {artistName}</h4>
+              <div className="form-group">
+                <label htmlFor="tipAmount">Amount (ETH):</label>
+                <input
+                  type="number"
+                  id="tipAmount"
+                  className="form-control"
+                  value={tipAmount}
+                  onChange={(e) => setTipAmount(e.target.value)}
+                  placeholder="0.01"
+                  min="0.001"
+                  step="0.001"
+                  disabled={loading}
+                  required
+                />
+                {tipAmount && (
+                  <div className="inr-equivalent">
+                    ≈ ₹{calculateInr(tipAmount)} INR
+                  </div>
+                )}
+              </div>
+              
+              {error && <div className="alert alert-error">{error}</div>}
+              
+              <button 
+                type="submit" 
+                className="btn-secondary"
+                disabled={loading || !tipAmount}
+              >
+                {loading ? (
+                  <span className="loading-indicator">
+                    <span className="loading-spinner"></span>
+                    Sending...
+                  </span>
+                ) : (
+                  'Send Tip'
+                )}
+              </button>
+            </form>
+          )}
         </div>
-      ) : (
-        <form onSubmit={handleTip} className={`tip-form ${compact ? 'compact' : ''}`}>
-          <h4>{compact ? '💝 Tip' : '💝 Tip'} {artistName}</h4>
-          <div className="form-group">
-            <label htmlFor="tipAmount">Amount (ETH):</label>
-            <input
-              type="number"
-              id="tipAmount"
-              className="form-control"
-              value={tipAmount}
-              onChange={(e) => setTipAmount(e.target.value)}
-              placeholder="0.01"
-              min="0.001"
-              step="0.001"
-              disabled={loading}
-              required
-            />
-            {tipAmount && (
-              <small style={{ color: 'var(--primary-color)', fontSize: '0.9rem', fontWeight: '500' }}>
-                ≈ ₹{calculateInr(tipAmount)} INR
-              </small>
-            )}
-          </div>
-          
-          {error && <div className="alert alert-error">{error}</div>}
-          
-          <button 
-            type="submit" 
-            className="btn-secondary"
-            disabled={loading || !tipAmount}
-            style={{ width: '100%' }}
-          >
-            {loading ? (
-              <span className="loading-indicator">
-                <span className="loading-spinner"></span>
-                Sending...
-              </span>
-            ) : (
-              'Send Tip'
-            )}
-          </button>
-        </form>
-      )}
+      </div>
     </div>
   );
 };

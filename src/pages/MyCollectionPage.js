@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import ArtworkCard from '../components/ArtworkCard';
 
@@ -9,15 +9,14 @@ const MyCollectionPage = ({ contract, account, isArtist }) => {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('creations');
 
-  useEffect(() => {
-    const fetchMyArtworks = async () => {
-      if (!contract || !account) return;
+  const fetchMyArtworks = useCallback(async () => {
+    if (!contract || !account) return;
+    
+    try {
+      setLoading(true);
+      setError('');
       
-      try {
-        setLoading(true);
-        setError('');
-        
-        // Get the total number of artworks
+      // Get the total number of artworks
         const artworkCount = await contract.artworkCount();
         const count = artworkCount.toNumber();
         
@@ -31,7 +30,7 @@ const MyCollectionPage = ({ contract, account, isArtist }) => {
             const [id, artist, price, isSold] = await contract.getArtworkBasic(i);
             
             // Get artwork details
-            const [title, description, ipfsHash] = await contract.getArtworkDetails(i);
+            const [title, description, imageUrl] = await contract.getArtworkDetails(i);
             
             // Get artist name
             const [artistName] = await contract.getArtistInfo(artist);
@@ -42,7 +41,7 @@ const MyCollectionPage = ({ contract, account, isArtist }) => {
               artistName,
               title,
               description,
-              ipfsHash,
+              ipfsHash: imageUrl, // Using ipfsHash property name for compatibility but it now contains direct URL
               price: price.toString(),
               isSold
             };
@@ -72,10 +71,18 @@ const MyCollectionPage = ({ contract, account, isArtist }) => {
       } finally {
         setLoading(false);
       }
-    };
+    }, [contract, account]);
 
+  useEffect(() => {
     fetchMyArtworks();
-  }, [contract, account]);
+  }, [contract, account, fetchMyArtworks]);
+
+  // Handle artwork removal
+  const handleArtworkRemoved = (removedArtworkId) => {
+    setMyCreations(prevCreations => 
+      prevCreations.filter(artwork => artwork.id !== removedArtworkId)
+    );
+  };
 
   if (loading) {
     return (
@@ -128,23 +135,31 @@ const MyCollectionPage = ({ contract, account, isArtist }) => {
         <div className="collection-stats">
           <div className="stat-card">
             <div className="stat-icon">🎨</div>
-            <div className="stat-number">{myCreations.length}</div>
-            <div className="stat-label">My Creations</div>
+            <div className="stat-content">
+              <div className="stat-number">{myCreations.length}</div>
+              <div className="stat-label">My Creations</div>
+            </div>
           </div>
           <div className="stat-card">
             <div className="stat-icon">🛒</div>
-            <div className="stat-number">{myPurchases.length}</div>
-            <div className="stat-label">My Purchases</div>
+            <div className="stat-content">
+              <div className="stat-number">{myPurchases.length}</div>
+              <div className="stat-label">My Purchases</div>
+            </div>
           </div>
           <div className="stat-card">
             <div className="stat-icon">💰</div>
-            <div className="stat-number">{myCreations.filter(a => a.isSold).length}</div>
-            <div className="stat-label">Items Sold</div>
+            <div className="stat-content">
+              <div className="stat-number">{myCreations.filter(a => a.isSold).length}</div>
+              <div className="stat-label">Items Sold</div>
+            </div>
           </div>
           <div className="stat-card">
             <div className="stat-icon">📈</div>
-            <div className="stat-number">{myCreations.length + myPurchases.length}</div>
-            <div className="stat-label">Total Items</div>
+            <div className="stat-content">
+              <div className="stat-number">{myCreations.length + myPurchases.length}</div>
+              <div className="stat-label">Total Items</div>
+            </div>
           </div>
         </div>
 
@@ -214,6 +229,7 @@ const MyCollectionPage = ({ contract, account, isArtist }) => {
                         contract={contract}
                         account={account}
                         showPurchaseButton={false}
+                        onArtworkRemoved={handleArtworkRemoved}
                       />
                     </div>
                   ))}

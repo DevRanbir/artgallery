@@ -1,0 +1,412 @@
+/* Artwork Viewer - Full Screen Background with Minimal UI */
+.artwork-viewer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
+  overflow: hidden;
+  animation: fadeIn var(--transition-normal) ease-out;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+/* Hide scrollbars globally when viewer is open */
+body:has(.artwork-viewer-overlay) {
+  overflow: hidden;
+}
+
+/* Hide scrollbars for the viewer itself */
+.artwork-viewer-overlay * {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer and Edge */
+}
+
+.artwork-viewer-overlay *::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}
+
+/* Background Image */
+.artwork-viewer-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: auto;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: filter var(--transition-slow) ease-out;
+}
+
+/* Dark Backdrop for Readability */
+.artwork-viewer-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.1) 30%,
+    rgba(0, 0, 0, 0.1) 70%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+}
+
+/* UI Container */
+.artwork-viewer-ui {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-lg);
+  z-index: 10;
+}
+
+/* Close Button */
+.artwork-viewer-close {
+  position: absolute;
+  top: var(--space-lg);
+  right: var(--space-lg);
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  color: white;
+  border-radius: 50%;
+  font-size: var(--font-size-xl);
+  font-weight: 300;
+  cursor: pointer;
+  z-index: 20;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.artwork-viewer-close:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Info Panels */
+.artwork-info-panel {
+  animation: slideInUp var(--transition-normal) ease-out;
+}
+
+.top-panel {
+  position: absolute;
+  top: var(--space-lg);
+  left: var(--space-lg);
+  right: 80px; /* Leave space for close button */
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-lg);
+}
+
+.bottom-panel {
+  position: absolute;
+  bottom: var(--space-lg);
+  left: var(--space-lg);
+  right: var(--space-lg);
+  max-width: 600px;
+}
+
+/* Title Section */
+.artwork-title-section {
+  flex: 1;
+  min-width: 0;
+}
+
+.artwork-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: white;
+  margin: 0 0 var(--space-xs) 0;
+  line-height: 1.2;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.artwork-artist {
+  font-size: var(--font-size-base);
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Price Section */
+.artwork-price-section {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.price-primary {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: white;
+  margin-bottom: var(--space-xs);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.price-secondary {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+/* Status Badge */
+.artwork-status-badge {
+  display: none;
+}
+
+.status-available {
+  color: #10b981;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-sold {
+  color: #ef4444;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.status-sold small {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  margin-top: var(--space-xs);
+}
+
+.status-removed {
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Action Buttons */
+.artwork-actions-panel {
+    position: absolute;
+    bottom: 7%;
+    right: var(--space-lg);
+    transform: translateY(50%);
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-md);
+    animation: slideInRight var(--transition-normal) ease-out 0.1s;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  border: none;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 120px;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.action-btn .btn-icon {
+  font-size: var(--font-size-base);
+}
+
+.action-btn .btn-text {
+  font-size: var(--font-size-sm);
+}
+
+.primary-action {
+  background: rgba(0, 0, 0, 0.407);
+  color: white;
+}
+
+.primary-action:hover:not(:disabled) {
+  background: rgb(0, 0, 0);
+  transform: translateY(-2px);
+}
+
+.secondary-action {
+  background: rgba(0, 0, 0, 0.407);
+  color: white;
+}
+
+.secondary-action:hover:not(:disabled) {
+  background: rgba(0, 0, 0);
+  transform: translateY(-2px);
+}
+
+.danger-action {
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+}
+
+.danger-action:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(239, 68, 68, 0.4);
+}
+
+/* Description */
+.artwork-description {
+  margin-bottom: var(--space-lg);
+}
+
+.artwork-description p {
+  font-size: var(--font-size-base);
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  margin: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Metadata */
+.artwork-metadata {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Courier New', monospace;
+}
+
+.metadata-item {
+  font-weight: 500;
+}
+
+.metadata-divider {
+  opacity: 0.5;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .artwork-viewer-ui {
+    padding: var(--space-md);
+  }
+  
+  .top-panel {
+    flex-direction: column;
+    gap: var(--space-md);
+    right: var(--space-md);
+    top: var(--space-md);
+    left: var(--space-md);
+  }
+  
+  .artwork-title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .artwork-status-badge {
+    position: static;
+    transform: none;
+    margin-top: var(--space-md);
+    text-align: center;
+  }
+  
+  .artwork-actions-panel {
+    position: static;
+    transform: none;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: var(--space-lg);
+  }
+  
+  .bottom-panel {
+    position: static;
+    margin-top: var(--space-xl);
+    max-width: none;
+  }
+  
+  .action-btn {
+    min-width: 100px;
+    padding: var(--space-sm) var(--space-md);
+  }
+  
+  .artwork-viewer-close {
+    top: var(--space-md);
+    right: var(--space-md);
+    width: 40px;
+    height: 40px;
+    font-size: var(--font-size-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .artwork-actions-panel {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .action-btn {
+    min-width: auto;
+  }
+  
+  .artwork-title {
+    font-size: var(--font-size-lg);
+  }
+  
+  .price-primary {
+    font-size: var(--font-size-lg);
+  }
+}

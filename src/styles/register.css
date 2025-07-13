@@ -1,357 +1,289 @@
-/* Register Page Styles */
+/* Register Page Styles - No Scroll Design */
 .register-page {
-  min-height: 100vh;
+  min-height: 91vh;
   padding-top: var(--navbar-height);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: linear-gradient(135deg, 
-    rgba(99, 102, 241, 0.05) 0%, 
-    rgba(236, 72, 153, 0.05) 50%,
-    rgba(16, 185, 129, 0.05) 100%
+    var(--primary-color) 0%, 
+    var(--secondary-color) 100%
   );
-}
-
-.register-container {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
-  padding: var(--container-padding);
-}
-
-.register-card {
-  background-color: var(--bg-primary);
-  padding: var(--space-2xl);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-xl);
-  border: 1px solid var(--border-light);
-  text-align: center;
-}
-
-.register-header {
-  margin-bottom: var(--space-2xl);
-}
-
-.register-icon {
-  width: 4rem;
-  height: 4rem;
-  margin: 0 auto var(--space-lg);
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  border-radius: var(--radius-full);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--font-size-xl);
-  color: white;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.register-title {
-  font-size: var(--font-size-2xl);
+/* Page Header */
+.page-header {
+  text-align: center;
+  padding: var(--space-2xl) var(--container-padding) var(--space-lg);
+  color: var(--text-inverse);
+}
+
+.page-header h1 {
+  font-size: var(--font-size-3xl);
   font-weight: 700;
   margin-bottom: var(--space-sm);
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.register-subtitle {
-  color: var(--text-secondary);
+.page-header p {
+  font-size: var(--font-size-lg);
+  margin: 0;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Main Content */
+.register-content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2xl);
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding) var(--space-xl);
+  align-items: start;
+}
+
+/* Register Info Section */
+.register-info {
+  backdrop-filter: blur(2px);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  color: var(--text-inverse);
+}
+
+.register-info h2 {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--space-lg);
+  color: var(--text-inverse);
+}
+
+.register-info ul {
+  list-style: none;
+  padding: 0;
+}
+
+.register-info li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
   font-size: var(--font-size-base);
   line-height: 1.6;
 }
 
-/* Registration Form */
-.register-form {
-  text-align: left;
+.register-info li:before {
+  content: "✨";
+  font-size: var(--font-size-lg);
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
-.form-group {
-  margin-bottom: var(--space-lg);
+.register-info li:last-child {
+  margin-bottom: 0;
 }
 
-.form-label {
+/* Register Form Container */
+.register-form-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Form Container Styling */
+.form-container {
+  width: 100%;
+  max-width: 450px;
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2xl);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-container form {
+  padding: var(--space-2xl);
+}
+
+.form-container h3 {
+  font-size: var(--font-size-xl);
+  text-align: center;
+  margin-bottom: var(--space-xl);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Form Groups */
+.form-container .form-group {
+  margin-bottom: var(--space-xl);
+}
+
+.form-container .form-group label {
   display: block;
   margin-bottom: var(--space-sm);
   font-weight: 500;
   color: var(--text-primary);
+  font-size: var(--font-size-sm);
 }
 
-.form-input {
+.form-container .form-control {
   width: 100%;
-  padding: var(--space-md);
+  padding: var(--space-lg);
   font-size: var(--font-size-base);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background-color: var(--bg-primary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-secondary);
   color: var(--text-primary);
   transition: all var(--transition-fast);
 }
 
-.form-input:focus {
+.form-container .form-control:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  background-color: var(--bg-primary);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+  transform: translateY(-1px);
 }
 
-.form-input::placeholder {
+.form-container .form-control::placeholder {
   color: var(--text-tertiary);
 }
 
-.input-icon {
-  position: relative;
-}
-
-.input-icon .form-input {
-  padding-left: 3rem;
-}
-
-.input-icon::before {
-  content: '';
-  position: absolute;
-  left: var(--space-md);
-  top: 50%;
-  transform: translateY(-50%);
-  width: 1.25rem;
-  height: 1.25rem;
-  background-color: var(--text-tertiary);
-  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>') no-repeat center;
-  mask-size: contain;
-}
-
-/* Form Validation */
-.form-error {
-  color: var(--error-color);
-  font-size: var(--font-size-sm);
-  margin-top: var(--space-xs);
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-.form-success {
-  color: var(--success-color);
-  font-size: var(--font-size-sm);
-  margin-top: var(--space-xs);
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-.input-valid {
-  border-color: var(--success-color);
-}
-
-.input-invalid {
-  border-color: var(--error-color);
-}
-
 /* Submit Button */
-.register-button {
+.form-container .btn-primary {
   width: 100%;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: white;
-  border: none;
-  padding: var(--space-md);
+  padding: var(--space-lg) var(--space-xl);
   font-size: var(--font-size-base);
   font-weight: 600;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+  border: none;
   cursor: pointer;
-  transition: all var(--transition-normal);
-  margin-bottom: var(--space-lg);
-  position: relative;
-  overflow: hidden;
 }
 
-.register-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-
-.register-button:disabled {
+.form-container .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
 }
 
-.register-button .loading-spinner {
-  width: 1rem;
-  height: 1rem;
-  margin-right: var(--space-sm);
+.form-container .btn-primary:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
 }
 
-/* Registration Status */
-.registration-status {
-  padding: var(--space-lg);
-  border-radius: var(--radius-md);
-  margin-bottom: var(--space-lg);
-  text-align: center;
-}
-
-.status-success {
-  background-color: rgba(16, 185, 129, 0.1);
-  border: 1px solid var(--success-color);
-  color: var(--success-color);
-}
-
-.status-error {
-  background-color: rgba(239, 68, 68, 0.1);
-  border: 1px solid var(--error-color);
-  color: var(--error-color);
-}
-
-.status-icon {
-  font-size: var(--font-size-2xl);
-  margin-bottom: var(--space-sm);
-}
-
-.status-title {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  margin-bottom: var(--space-sm);
-}
-
-.status-message {
-  font-size: var(--font-size-sm);
-  line-height: 1.5;
-}
-
-/* Artist Info Display */
-.artist-info {
-  background-color: var(--bg-secondary);
-  padding: var(--space-lg);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-light);
-  text-align: center;
-}
-
-.artist-avatar {
-  width: 4rem;
-  height: 4rem;
-  margin: 0 auto var(--space-md);
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  border-radius: 50%;
+/* Loading Indicator */
+.loading-indicator {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-size-xl);
-  font-weight: 700;
-  color: white;
-}
-
-.artist-name {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: var(--space-sm);
-}
-
-.artist-address {
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-  font-family: 'Monaco', 'Menlo', monospace;
-  word-break: break-all;
-}
-
-/* Tips & Guidelines */
-.registration-tips {
-  background-color: var(--bg-secondary);
-  padding: var(--space-lg);
-  border-radius: var(--radius-md);
-  border-left: 4px solid var(--primary-color);
-  margin-top: var(--space-lg);
-}
-
-.tips-title {
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: var(--space-sm);
-  display: flex;
-  align-items: center;
   gap: var(--space-sm);
 }
 
-.tips-list {
-  list-style: none;
-  padding: 0;
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid var(--text-inverse);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-.tips-list li {
-  padding: var(--space-xs) 0;
-  color: var(--text-secondary);
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Alert Styling */
+.form-container .alert {
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
-  position: relative;
-  padding-left: var(--space-lg);
+  border-left: 4px solid;
 }
 
-.tips-list li::before {
-  content: '✓';
-  position: absolute;
-  left: 0;
+.form-container .alert-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: var(--success-color);
   color: var(--success-color);
-  font-weight: bold;
-}
-
-/* Call to Action */
-.register-cta {
   text-align: center;
-  margin-top: var(--space-xl);
-  padding-top: var(--space-lg);
-  border-top: 1px solid var(--border-light);
 }
 
-.cta-text {
-  color: var(--text-secondary);
+.form-container .alert-success h3 {
+  color: var(--success-color);
+  margin-bottom: var(--space-sm);
+  font-size: var(--font-size-lg);
+}
+
+.form-container .alert-success p {
+  margin: 0;
   font-size: var(--font-size-sm);
-  margin-bottom: var(--space-md);
 }
 
-.cta-link {
-  color: var(--primary-color);
-  font-weight: 500;
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-.cta-link:hover {
-  color: var(--primary-hover);
-  text-decoration: underline;
+.form-container .alert-error {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: var(--error-color);
+  color: var(--error-color);
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-  .register-page {
-    padding: var(--space-lg) 0;
-    align-items: flex-start;
+@media (max-width: 968px) {
+  .register-content {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+    padding-bottom: var(--space-2xl);
   }
-
-  .register-card {
-    padding: var(--space-lg);
-    margin: var(--space-lg) 0;
+  
+  .register-info {
+    order: 2;
+    padding: var(--space-xl);
   }
-
-  .register-title {
-    font-size: var(--font-size-xl);
+  
+  .register-form-container {
+    order: 1;
   }
-
-  .register-icon {
-    width: 3rem;
-    height: 3rem;
-    font-size: var(--font-size-lg);
+  
+  .page-header {
+    padding: var(--space-xl) var(--container-padding) var(--space-md);
+  }
+  
+  .page-header h1 {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .page-header p {
+    font-size: var(--font-size-base);
   }
 }
 
-@media (max-width: 480px) {
-  .register-container {
-    padding: var(--space-sm);
+@media (max-width: 640px) {
+  .form-container {
+    margin: 0 var(--space-md);
   }
+  
+  .form-container form {
+    padding: var(--space-xl);
+  }
+  
+  .register-info {
+    margin: 0 var(--space-md);
+    padding: var(--space-lg);
+  }
+  
+  .register-content {
+    padding: 0 0 var(--space-xl);
+  }
+}
 
-  .register-card {
-    padding: var(--space-md);
-  }
+/* Theme-specific adjustments */
 
-  .artist-address {
-    font-size: var(--font-size-xs);
-  }
+
+[data-theme="purple"] .register-page {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+[data-theme="ocean"] .register-page {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
 }

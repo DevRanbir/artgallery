@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import RegisterArtist from '../components/RegisterArtist';
+import '../styles/register.css';
 
 const RegisterPage = ({ contract, account, setIsArtist, setArtistName }) => {
   const navigate = useNavigate();
