@@ -127,6 +127,9 @@ const MyCollectionPage = ({ contract, account, isArtist }) => {
         <div className="container">
           <h1 className="collection-title">My Collection</h1>
           <p className="collection-subtitle">Your created artworks and purchased pieces</p>
+          <div className="developer-credit-header">
+            <small>Developed by <strong>DevRanbir</strong></small>
+          </div>
         </div>
       </div>
       

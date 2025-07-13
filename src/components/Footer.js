@@ -60,16 +60,16 @@ const Footer = () => {
             <div className="footer-section">
               <h4 className="footer-title">Connect</h4>
               <div className="social-links">
-                <a href="#twitter" className="social-link" title="Twitter">
+                <a href="https://devranbir.github.io" className="social-link" title="Twitter">
                   <span>🐦</span>
                 </a>
-                <a href="#discord" className="social-link" title="Discord">
+                <a href="https://devranbir.github.io" className="social-link" title="Discord">
                   <span>💬</span>
                 </a>
-                <a href="#telegram" className="social-link" title="Telegram">
+                <a href="https://devranbir.github.io" className="social-link" title="Telegram">
                   <span>✈️</span>
                 </a>
-                <a href="#github" className="social-link" title="GitHub">
+                <a href="https://devranbir.github.io" className="social-link" title="GitHub">
                   <span>🔗</span>
                 </a>
               </div>
@@ -89,6 +89,11 @@ const Footer = () => {
             <p className="copyright">
               &copy; {currentYear} ArtBlocks. All rights reserved.
             </p>
+
+            <div className="developer-credit">
+              <p>Developed by <strong>DevRanbir</strong> for <strong>Vac Project</strong></p>
+            </div>
+
             <div className="footer-meta">
               <span className="network-status">
                 <span className="status-dot"></span>

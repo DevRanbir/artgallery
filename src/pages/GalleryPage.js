@@ -10,6 +10,9 @@ const GalleryPage = ({ contract, account, isArtist }) => {
           <p className="gallery-subtitle">
             Discover and collect unique digital artworks from talented artists around the world
           </p>
+          <div className="developer-credit-header">
+            <small>Developed by <strong>DevRanbir</strong></small>
+          </div>
         </div>
       </div>
       

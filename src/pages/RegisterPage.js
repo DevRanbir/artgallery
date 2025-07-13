@@ -19,6 +19,9 @@ const RegisterPage = ({ contract, account, setIsArtist, setArtistName }) => {
       <div className="page-header">
         <h1>Register as an Artist</h1>
         <p>Join our community of creative artists and start selling your digital artwork</p>
+        <div className="developer-credit-header">
+          <small>Developed by <strong>DevRanbir</strong></small>
+        </div>
       </div>
       
       <div className="register-content">

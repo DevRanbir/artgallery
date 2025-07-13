@@ -10,7 +10,7 @@ const HomePage = ({ account, isArtist, artistName, networkInfo }) => {
           <h1 className="hero-title">Welcome to ArtGallery</h1>
           <p className="hero-subtitle">
             Discover, collect, and trade unique digital artworks on the blockchain. 
-            Support artists and build your exclusive collection.
+            Support artists and build your exclusive collection <i>-DevRanbir</i>
           </p>
           
           <div className="hero-actions">
@@ -136,6 +136,15 @@ const HomePage = ({ account, isArtist, artistName, networkInfo }) => {
           <Link to="/gallery" className="btn cta-button btn-large">
             🚀 Explore Gallery Now
           </Link>
+        </div>
+      </section>
+      
+      {/* Developer Credit */}
+      <section className="developer-credit-section">
+        <div className="container">
+          <p className="developer-credit-text">
+            Developed by <strong>DevRanbir</strong>
+          </p>
         </div>
       </section>
     </div>
