@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-const Navigation = ({ account, isArtist, artistName }) => {
+const Navigation = ({ account, isArtist, artistName, connectWallet }) => {
   const location = useLocation();
   const [currentTheme, setCurrentTheme] = useState('light');
   const [showThemeDropdown, setShowThemeDropdown] = useState(false);
@@ -28,6 +28,9 @@ const Navigation = ({ account, isArtist, artistName }) => {
   };
   
   const isActive = (path) => {
+    if (path === '/home' && (location.pathname === '/' || location.pathname === '/home')) {
+      return 'active';
+    }
     return location.pathname === path ? 'active' : '';
   };
 
@@ -38,13 +41,13 @@ const Navigation = ({ account, isArtist, artistName }) => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <Link to="/" className="navbar-brand">
+        <Link to="/home" className="navbar-brand">
           <div className="navbar-brand-icon">AG</div>
           <span>ArtGallery</span>
         </Link>
         
         <ul className={`navbar-nav ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
-          <li><Link to="/" className={isActive('/')}>Home</Link></li>
+          <li><Link to="/home" className={isActive('/home')}>Home</Link></li>
           <li><Link to="/gallery" className={isActive('/gallery')}>Gallery</Link></li>
           <li><Link to="/collection" className={isActive('/collection')}>My Collection</Link></li>
           {isArtist ? (
@@ -57,7 +60,7 @@ const Navigation = ({ account, isArtist, artistName }) => {
         <div className="navbar-user">
           
           {/* User Info */}
-          {account && (
+          {account ? (
             <div className="user-info">
                 {/* Theme Switcher */}
                 <div className="theme-switcher">
@@ -89,6 +92,33 @@ const Navigation = ({ account, isArtist, artistName }) => {
                   <div className="account-balance">Artist: {artistName}</div>
                 )}
               </div>
+            </div>
+          ) : (
+            <div className="connect-wallet-section">
+              <div className="theme-switcher">
+                <button 
+                  className="theme-toggle"
+                  onClick={() => setShowThemeDropdown(!showThemeDropdown)}
+                >
+                  <span className="theme-icon">{getCurrentThemeIcon()}</span>
+                </button>
+                
+                <div className={`theme-dropdown ${showThemeDropdown ? 'open' : ''}`}>
+                  {themes.map(theme => (
+                    <button
+                      key={theme.id}
+                      className={`theme-option ${currentTheme === theme.id ? 'active' : ''}`}
+                      onClick={() => handleThemeChange(theme.id)}
+                    >
+                      <div className={`theme-option-icon theme-${theme.id}`}></div>
+                      <span>{theme.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <button className="connect-wallet-btn" onClick={connectWallet}>
+                Connect Wallet
+              </button>
             </div>
           )}
 

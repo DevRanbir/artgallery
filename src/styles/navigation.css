@@ -226,6 +226,85 @@
   transition: all var(--transition-fast);
 }
 
+/* Connect Wallet Section */
+.connect-wallet-section {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.connect-wallet-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border: none;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+}
+
+.connect-wallet-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+}
+
+/* MetaMask Prompt Styles */
+.metamask-prompt {
+  background: var(--card-background);
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin: var(--space-lg) 0;
+  text-align: center;
+  transition: all var(--transition-normal);
+}
+
+.metamask-prompt:hover {
+  border-color: var(--primary-color);
+  background: var(--primary-light);
+}
+
+.metamask-prompt-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.metamask-icon {
+  font-size: 2.5rem;
+  margin-bottom: var(--space-sm);
+}
+
+.metamask-message {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: var(--font-size-md);
+}
+
+.connect-wallet-btn-prompt {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border: none;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+  min-width: 180px;
+}
+
+.connect-wallet-btn-prompt:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .navbar-nav {
     display: none;
@@ -255,5 +334,25 @@
   .theme-dropdown {
     right: auto;
     left: 0;
+  }
+
+  .connect-wallet-section {
+    gap: var(--space-sm);
+  }
+  
+  .connect-wallet-btn {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--font-size-xs);
+  }
+  
+  .metamask-prompt {
+    padding: var(--space-lg);
+    margin: var(--space-md) 0;
+  }
+  
+  .connect-wallet-btn-prompt {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-sm);
+    min-width: 150px;
   }
 }

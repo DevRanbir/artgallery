@@ -1,7 +1,7 @@
 import React from 'react';
 import Gallery from '../components/Gallery';
 
-const GalleryPage = ({ contract, account, isArtist }) => {
+const GalleryPage = ({ contract, account, isArtist, connectWallet }) => {
   return (
     <div className="gallery-page">
       <div className="gallery-header">
@@ -17,7 +17,7 @@ const GalleryPage = ({ contract, account, isArtist }) => {
       </div>
       
       <div className="gallery-content">
-        <Gallery contract={contract} account={account} isArtist={isArtist} />
+        <Gallery contract={contract} account={account} isArtist={isArtist} connectWallet={connectWallet} />
       </div>
     </div>
   );

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import ArtworkCard from '../components/ArtworkCard';
+import MetaMaskPrompt from '../components/MetaMaskPrompt';
 
-const MyCollectionPage = ({ contract, account, isArtist }) => {
+const MyCollectionPage = ({ contract, account, isArtist, connectWallet }) => {
   const [myCreations, setMyCreations] = useState([]);
   const [myPurchases, setMyPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,7 +11,12 @@ const MyCollectionPage = ({ contract, account, isArtist }) => {
   const [activeTab, setActiveTab] = useState('creations');
 
   const fetchMyArtworks = useCallback(async () => {
-    if (!contract || !account) return;
+    if (!contract || !account) {
+      setLoading(false);
+      setMyCreations([]);
+      setMyPurchases([]);
+      return;
+    }
     
     try {
       setLoading(true);
@@ -134,7 +140,14 @@ const MyCollectionPage = ({ contract, account, isArtist }) => {
       </div>
       
       <div className="collection-content">
-        {/* Collection Stats */}
+        {!account ? (
+          <MetaMaskPrompt 
+            connectWallet={connectWallet}
+            message="Connect your wallet to view your collection and manage your artworks"
+          />
+        ) : (
+          <>
+            {/* Collection Stats */}
         <div className="collection-stats">
           <div className="stat-card">
             <div className="stat-icon">🎨</div>
@@ -306,6 +319,8 @@ const MyCollectionPage = ({ contract, account, isArtist }) => {
             )}
           </div>
         </div>
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 /* Upload Page Styles - No Scroll Design */
 .upload-page {
-  padding-top: var(--navbar-height);
   background: linear-gradient(135deg, 
     var(--primary-color-10) 0%, 
     var(--secondary-color-10) 100%
@@ -15,7 +14,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: -80px;
+  margin-top: -110px;
 }
 
 .upload-form-wrapper {
