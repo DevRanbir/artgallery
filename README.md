@@ -1,198 +1,213 @@
-# ArtBlocks - Decentralized Art Gallery
+# 🎨 On-Chain Art Gallery DApp
 
-A modern, beautiful decentralized application (dApp) for digital art marketplace built on Ethereum blockchain.
+> **A decentralized art marketplace where artists register, upload artwork metadata, and buyers can purchase or tip directly on the blockchain.**
+
+[![Deploy to GitHub Pages](https://github.com/DevRanbir/artgallery/actions/workflows/deploy.yml/badge.svg)](https://devranbir.github.io/artgallery)
 
 ## ✨ Features
 
-- **🎨 Artist Registration**: Register as an artist and showcase your digital artwork
-- **🖼️ Art Gallery**: Browse and discover unique digital artworks
-- **💰 Purchase Artworks**: Buy digital art directly from artists using ETH
-- **💝 Tip Artists**: Support your favorite artists with tips
-- **🔒 Blockchain Security**: All transactions secured by Ethereum smart contracts
+🎨 **Artist Registration** - One-time registration to become a verified artist  
+🖼️ **Upload Artwork** - Store metadata and image URLs directly on-chain  
+🏛️ **Public Gallery** - Browse all available artworks  
+💰 **Direct Purchase** - Buy artwork with ETH, payment goes directly to artist  
+💝 **Artist Tipping** - Support artists with direct tips  
+🔒 **Blockchain Security** - All transactions secured by Ethereum smart contracts
 
-## 🏗️ Project Structure
+## 🚀 Quick Start
 
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v16+)
+- [MetaMask](https://metamask.io/) browser extension
+- [Truffle](https://trufflesuite.com/) for smart contract deployment
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/DevRanbir/artgallery.git
+cd artgallery
+
+# Install dependencies
+npm install
+
+# Start development server
+npm start
+```
+
+### Smart Contract Deployment
+
+```bash
+# Install Truffle globally
+npm install -g truffle
+
+# Compile contracts
+truffle compile
+
+# Deploy to local network (Ganache)
+truffle migrate --network development
+
+# Deploy to testnet (optional)
+truffle migrate --network goerli
+```
+
+## 🏗️ Architecture
+
+### Smart Contract (`ArtGallery.sol`)
+```solidity
+struct Artist {
+    string name;
+    bool isRegistered;
+}
+
+struct Artwork {
+    uint id;
+    address artist;
+    string title;
+    string description;
+    string imageUrl;  // Direct image URL
+    uint price;
+    bool isSold;
+}
+```
+
+### Key Functions
+- `registerAsArtist(string name)` - Register as verified artist
+- `uploadArtwork(...)` - Upload artwork metadata 
+- `purchaseArtwork(uint id)` - Buy artwork with ETH
+- `tipArtist(address artist)` - Send tip to artist
+
+### Frontend Architecture
 ```
 src/
 ├── components/          # Reusable UI components
-│   ├── Navigation.js   # Main navigation bar
-│   ├── Footer.js       # Site footer
-│   ├── LoadingPage.js  # Loading screen
-│   ├── Gallery.js      # Gallery component
-│   ├── ArtworkCard.js  # Individual artwork display
-│   ├── RegisterArtist.js # Artist registration form
-│   ├── UploadArtwork.js # Artwork upload form
-│   ├── Purchase.js     # Purchase functionality
-│   └── Tip.js          # Artist tipping functionality
-├── pages/              # Main application pages
-│   ├── HomePage.js     # Landing page
-│   ├── GalleryPage.js  # Gallery page
-│   ├── RegisterPage.js # Artist registration page
-│   └── UploadPage.js   # Artwork upload page
-├── App.js             # Main application component
-├── theme.css          # Custom styling and theme
-└── index.js          # Application entry point
+├── pages/              # Application pages  
+├── styles/             # CSS styling
+└── utils/              # Helper functions
 ```
 
-## 🎨 Design Features
+## 🎯 Core Workflows
 
-- **Modern UI**: Clean, responsive design with beautiful color scheme
-- **Color Theme**: Purple primary (#6C63FF), Pink secondary (#FF6584), Green accent (#43B97F)
-- **Responsive**: Works perfectly on desktop, tablet, and mobile devices
-- **Loading States**: Smooth loading animations and feedback
-- **Error Handling**: User-friendly error messages and retry options
+### For Artists
+1. **Register** → Connect MetaMask → Register as artist
+2. **Upload** → Add artwork details → Provide image URL → Set price
+3. **Earn** → Receive payments directly when artwork sells
 
-## Prerequisites
+### For Buyers  
+1. **Browse** → View gallery of available artworks
+2. **Purchase** → Connect MetaMask → Buy with ETH
+3. **Tip** → Support favorite artists directly
 
-- Node.js and npm
-- MetaMask browser extension
-- Truffle (for contract deployment)
+## 💾 Data Storage
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- **Metadata**: Stored on-chain (title, description, price)
+- **Images**: Direct image URLs stored on-chain
+- **Payments**: Direct ETH transfers via smart contract
+
+## 🛠️ Tech Stack
+
+| Component | Technology |
+|-----------|------------|
+| **Frontend** | React 19, React Router |
+| **Blockchain** | Solidity, Truffle |
+| **Web3** | Ethers.js, MetaMask |
+| **Storage** | On-chain (metadata & image URLs) |
+| **Styling** | CSS3, Custom Properties |
+| **Deployment** | GitHub Pages, Ethereum Networks |
 
 ## Available Scripts
 
-In the project directory, you can run:
+| Command | Description |
+|---------|-------------|
+| `npm start` | Run development server |
+| `npm test` | Run test suite |
+| `npm run build` | Build for production |
+| `npm run deploy` | Deploy to GitHub Pages |
+| `truffle compile` | Compile smart contracts |
+| `truffle migrate` | Deploy contracts |
 
-### `npm start`
+## 🌐 Image Hosting
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+For artwork images, you can use any reliable image hosting service:
+- **[Imgur](https://imgur.com/)** - Free image hosting
+- **[Cloudinary](https://cloudinary.com/)** - Professional image management  
+- **[GitHub](https://github.com/)** - Host images in repository
+- **Direct URLs** - Any publicly accessible image URL
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Simply provide the direct image URL when uploading artwork through the dApp.
 
-### `npm test`
+## � Configuration
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### MetaMask Setup
+1. Install [MetaMask](https://metamask.io/)
+2. Create/import wallet
+3. Add test network (Ganache/Goerli)
+4. Get test ETH from faucet
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Smart Contract Integration
-
-The application uses the ArtGallery smart contract which provides the following functionality:
-
-- Artist registration
-- Artwork upload and management
-- Purchase functionality
-- Tipping system
-
-### Deploying the Contract
-
-Make sure you have Truffle installed:
-
-```bash
-npm install -g truffle
+### Contract Address
+Update contract address in `src/App.js` after deployment:
+```javascript
+const CONTRACT_ADDRESS = "0x..."; // Your deployed contract address
 ```
 
-Compile and deploy the contract:
+## 🎨 Features Showcase
 
-```bash
-truffle compile
-truffle migrate --network development
-```
-
-After deployment, update the contract address in `src/App.js` with your deployed contract address.
-
-## IPFS Integration
-
-To upload images to IPFS, you can use services like:
-- Pinata (https://pinata.cloud/)
-- IPFS Desktop (https://github.com/ipfs/ipfs-desktop)
-
-After uploading an image to IPFS, use the returned hash when uploading artwork through the dApp.
-
-## 🚀 Getting Started
-
-1. **Install Dependencies**
-   ```bash
-   npm install
-   ```
-
-2. **Start Development Server**
-   ```bash
-   npm start
-   ```
-
-3. **Configure MetaMask**
-   - Install MetaMask browser extension
-   - Connect to your preferred Ethereum network
-   - Ensure you have some ETH for transactions
-
-4. **Update Contract Address**
-   - Deploy your ArtGallery smart contract
-   - Update the contract address in `src/App.js`
-
-## 📱 Pages Overview
-
-### 🏠 Home Page
-- Hero section with call-to-action buttons
-- Feature highlights
+### 🏠 Landing Page
+- Hero section with clear call-to-action
+- Feature highlights and benefits
 - Easy navigation to main sections
 
-### 🖼️ Gallery Page
-- Grid layout of all available artworks
-- Search functionality
-- Purchase and tip buttons for each artwork
+### 🖼️ Gallery
+- Grid layout of available artworks
+- Real-time price display in ETH
+- One-click purchase and tipping
 
-### ✍️ Register Page
-- Artist registration form
-- Information about benefits
-- Automatic redirect to upload page after registration
+### ✍️ Artist Dashboard  
+- Registration workflow
+- Artwork upload with direct image URLs
+- Sales tracking and analytics
 
-### 📤 Upload Page
-- Artwork upload form with IPFS integration
-- Detailed instructions
-- Price setting and metadata input
+## � Deployment
 
-## 🛠️ Technologies Used
+### GitHub Pages (Frontend)
+```bash
+npm run deploy
+```
 
-- **React 19**: Modern React with hooks
-- **React Router**: Client-side routing
-- **Ethers.js**: Ethereum blockchain interaction
-- **CSS Custom Properties**: Modern styling approach
-- **IPFS**: Decentralized file storage
+### Smart Contract Networks
+- **Local**: Ganache (development)
+- **Testnet**: Goerli, Sepolia  
+- **Mainnet**: Ethereum (production)
 
-## 💡 Key Improvements
+## 🎯 Future Roadmap
 
-1. **Page-based Architecture**: Clean separation of concerns with dedicated pages
-2. **Modern Styling**: Beautiful gradient colors, shadows, and animations
-3. **Better UX**: Loading states, error handling, and user feedback
-4. **Responsive Design**: Mobile-first approach with proper breakpoints
-5. **Accessibility**: Focus states and proper semantic markup
+- [ ] NFT Integration (ERC-721)
+- [ ] Auction System
+- [ ] Artist Royalties
+- [ ] Advanced Search & Filters
+- [ ] Mobile App (React Native)
+- [ ] Layer 2 Support (Polygon, Arbitrum)
 
-## 🎯 Future Enhancements
+## 🤝 Contributing
 
-- Dark mode support
-- Advanced search and filtering
-- Artist profiles and portfolios
-- Auction functionality
-- Collection management
-- Social features (comments, likes)
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Developer**: [DevRanbir (Ranbir Khurana)](https://github.com/DevRanbir)
+- Built with [Create React App](https://create-react-app.dev/)
+- Inspired by decentralized art communities
+- Thanks to the Ethereum ecosystem
 
 ---
 
-Built with ❤️ for the decentralized art community
+**🌟 Star this repo if you found it helpful!**
+
+Built with ❤️ by **DevRanbir (Ranbir Khurana)** for the decentralized art community
