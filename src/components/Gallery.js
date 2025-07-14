@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ArtworkCard from './ArtworkCard';
+import MetaMaskPrompt from './MetaMaskPrompt';
 
-const Gallery = ({ contract, account, isArtist }) => {
+const Gallery = ({ contract, account, isArtist, connectWallet }) => {
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -14,9 +15,9 @@ const Gallery = ({ contract, account, isArtist }) => {
   const controlsRef = useRef(null);
 
   const fetchArtworks = useCallback(async () => {
-    if (!contract) {
+    if (!contract || !account) {
       setLoading(false);
-      setError('Wallet not connected or contract not loaded. Please connect your wallet.');
+      setArtworks([]); // Clear artworks if no connection
       return;
     }
 
@@ -110,7 +111,7 @@ const Gallery = ({ contract, account, isArtist }) => {
     } finally {
       setLoading(false);
     }
-  }, [contract]);
+  }, [contract, account]);
 
   useEffect(() => {
     fetchArtworks();
@@ -224,8 +225,15 @@ const Gallery = ({ contract, account, isArtist }) => {
 
   return (
     <div className="gallery-container">
-      {/* Gallery Controls */}
-      <div className={`gallery-controls ${isSticky ? 'sticky-active' : ''}`} ref={controlsRef}>
+      {!account ? (
+        <MetaMaskPrompt 
+          connectWallet={connectWallet}
+          message="Connect your wallet to view and interact with artworks"
+        />
+      ) : (
+        <>
+          {/* Gallery Controls */}
+          <div className={`gallery-controls ${isSticky ? 'sticky-active' : ''}`} ref={controlsRef}>
         <div className="gallery-search">
           <input
             type="text"
@@ -320,6 +328,8 @@ const Gallery = ({ contract, account, isArtist }) => {
             </div>
           ))}
         </div>
+      )}
+        </>
       )}
     </div>
   );

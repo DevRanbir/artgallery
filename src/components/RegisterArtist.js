@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import MetaMaskPrompt from './MetaMaskPrompt';
 
-const RegisterArtist = ({ contract, account, setIsArtist, setArtistName, onSuccess }) => {
+const RegisterArtist = ({ contract, account, setIsArtist, setArtistName, onSuccess, connectWallet }) => {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -43,7 +44,12 @@ const RegisterArtist = ({ contract, account, setIsArtist, setArtistName, onSucce
 
   return (
     <div className="form-container">
-      {success ? (
+      {!account ? (
+        <MetaMaskPrompt 
+          connectWallet={connectWallet}
+          message="Connect your wallet to register as an artist"
+        />
+      ) : success ? (
         <div className="alert alert-success">
           <h3>🎨 Welcome to ArtBlocks!</h3>
           <p>Successfully registered as an artist! You can now upload your artwork.</p>

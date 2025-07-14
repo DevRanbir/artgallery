@@ -6,7 +6,6 @@ import './styles/main.css';
 // Import components
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
-import LoadingPage from './components/LoadingPage';
 
 // Import pages
 import HomePage from './pages/HomePage';
@@ -45,7 +44,6 @@ function App() {
   const [contract, setContract] = useState(null);
   const [isArtist, setIsArtist] = useState(false);
   const [artistName, setArtistName] = useState('');
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [networkInfo, setNetworkInfo] = useState('');
 
@@ -54,106 +52,30 @@ function App() {
       try {
         // Check if MetaMask is installed
         if (!window.ethereum) {
-          setError('Please install MetaMask to use this dApp');
-          setLoading(false);
+          console.log('MetaMask not installed');
           return;
         }
 
-        // Request account access
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        if (accounts.length === 0) {
-          setError('Please connect your MetaMask wallet');
-          setLoading(false);
-          return;
-        }
-
-        setAccount(accounts[0]);
-
-        // Create ethers provider and signer
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-
-        // Get network information
-        const network = await provider.getNetwork();
-        setNetworkInfo(`Network: ${network.name} (Chain ID: ${network.chainId})`);
-        console.log('Connected to network:', network);
-
-        // Contract address - REPLACE WITH YOUR DEPLOYED CONTRACT ADDRESS
-        const contractAddress = '0x15A0812cD344ed83F8e2562Ef8FA18bdab2256A0';
-        
-        // Verify contract exists at the address
-        const code = await provider.getCode(contractAddress);
-        if (code === '0x') {
-          setError(`No contract found at address ${contractAddress} on ${network.name}. Please verify the contract is deployed on the correct network.`);
-          setLoading(false);
-          return;
-        }
-
-        console.log('Contract code found at address:', contractAddress);
-
-        // Create contract instance
-        const artGalleryContract = new ethers.Contract(
-          contractAddress,
-          ArtGalleryABI,
-          signer
-        );
-        
-        setContract(artGalleryContract);
-
-        // Test contract connectivity with a simple call first
+        // Try to get connected accounts without requesting access
         try {
-          console.log('Testing contract connectivity...');
-          const artworkCount = await artGalleryContract.artworkCount();
-          console.log('Contract is accessible. Artwork count:', artworkCount.toString());
-        } catch (contractError) {
-          console.error('Contract test call failed:', contractError);
-          setError(`Contract at ${contractAddress} is not responding correctly. Please check if it's the right contract address and network.`);
-          setLoading(false);
-          return;
-        }
-
-        // Check if current user is a registered artist
-        try {
-          console.log('Checking artist status for:', accounts[0]);
-          const artistInfo = await artGalleryContract.getArtistInfo(accounts[0]);
-          console.log('Artist info:', artistInfo);
-          setIsArtist(artistInfo.isRegistered);
-          setArtistName(artistInfo.name);
-        } catch (artistError) {
-          console.error('Error checking artist status:', artistError);
-          // Don't fail the entire app if artist check fails
-          // Just assume user is not an artist
-          setIsArtist(false);
-          setArtistName('');
-          console.log('Assuming user is not a registered artist');
-        }
-
-        // Listen for account changes
-        window.ethereum.on('accountsChanged', (newAccounts) => {
-          console.log('Account changed to:', newAccounts[0]);
-          setAccount(newAccounts[0] || '');
-          if (newAccounts.length === 0) {
-            setError('Please connect your MetaMask wallet');
-          } else {
-            // Reload to reinitialize with new account
-            window.location.reload();
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          if (accounts.length === 0) {
+            console.log('No accounts connected');
+            return;
           }
-        });
+          setAccount(accounts[0]);
 
-        // Listen for network changes
-        window.ethereum.on('chainChanged', (chainId) => {
-          console.log('Network changed to:', chainId);
-          // Reload the page to reinitialize with new network
-          window.location.reload();
-        });
+          // Only initialize contract if account is connected
+          await initializeContract(accounts[0]);
+        } catch (accountError) {
+          console.log('Could not get accounts:', accountError);
+          return;
+        }
 
-        setLoading(false);
         console.log('App initialization completed successfully');
 
       } catch (err) {
         console.error('Error initializing app:', err);
-        setError(`Error connecting to blockchain: ${err.message}`);
-        setLoading(false);
       }
     };
 
@@ -168,16 +90,117 @@ function App() {
     };
   }, []);
 
-  if (loading) {
-    return (
-      <div className="app-container">
-        <div className="loading">
-          <h2>Loading...</h2>
-          <p>Connecting to blockchain...</p>
-        </div>
-      </div>
-    );
-  }
+  const initializeContract = async (userAccount) => {
+    try {
+      // Create ethers provider and signer
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+
+      // Get network information
+      const network = await provider.getNetwork();
+      setNetworkInfo(`Network: ${network.name} (Chain ID: ${network.chainId})`);
+      console.log('Connected to network:', network);
+
+      // Contract address - REPLACE WITH YOUR DEPLOYED CONTRACT ADDRESS
+      const contractAddress = '0x0be6339b6cc21ae512c38c4ee55fe43ff20976e4';
+      
+      // Verify contract exists at the address
+      const code = await provider.getCode(contractAddress);
+      if (code === '0x') {
+        setError(`No contract found at address ${contractAddress} on ${network.name}. Please verify the contract is deployed on the correct network.`);
+        return;
+      }
+
+      console.log('Contract code found at address:', contractAddress);
+
+      // Create contract instance
+      const artGalleryContract = new ethers.Contract(
+        contractAddress,
+        ArtGalleryABI,
+        signer
+      );
+      
+      setContract(artGalleryContract);
+
+      // Test contract connectivity with a simple call first
+      try {
+        console.log('Testing contract connectivity...');
+        const artworkCount = await artGalleryContract.artworkCount();
+        console.log('Contract is accessible. Artwork count:', artworkCount.toString());
+      } catch (contractError) {
+        console.error('Contract test call failed:', contractError);
+        setError(`Contract at ${contractAddress} is not responding correctly. Please check if it's the right contract address and network.`);
+        return;
+      }
+
+      // Check if current user is a registered artist
+      try {
+        console.log('Checking artist status for:', userAccount);
+        const artistInfo = await artGalleryContract.getArtistInfo(userAccount);
+        console.log('Artist info:', artistInfo);
+        setIsArtist(artistInfo.isRegistered);
+        setArtistName(artistInfo.name);
+      } catch (artistError) {
+        console.error('Error checking artist status:', artistError);
+        // Don't fail the entire app if artist check fails
+        // Just assume user is not an artist
+        setIsArtist(false);
+        setArtistName('');
+        console.log('Assuming user is not a registered artist');
+      }
+
+      // Listen for account changes
+      window.ethereum.on('accountsChanged', (newAccounts) => {
+        console.log('Account changed to:', newAccounts[0]);
+        setAccount(newAccounts[0] || '');
+        // Don't reload, just update state
+        if (newAccounts.length > 0) {
+          // Reinitialize contract if account is connected
+          window.location.reload();
+        } else {
+          // Clear contract and artist state if disconnected
+          setContract(null);
+          setIsArtist(false);
+          setArtistName('');
+          setNetworkInfo('');
+        }
+      });
+
+      // Listen for network changes
+      window.ethereum.on('chainChanged', (chainId) => {
+        console.log('Network changed to:', chainId);
+        // Reload the page to reinitialize with new network
+        window.location.reload();
+      });
+
+    } catch (err) {
+      console.error('Error initializing contract:', err);
+      setError(`Error connecting to blockchain: ${err.message}`);
+    }
+  };
+
+  // Function to request MetaMask connection
+  const connectWallet = async () => {
+    try {
+      if (!window.ethereum) {
+        alert('Please install MetaMask to connect your wallet');
+        return;
+      }
+      
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      if (accounts.length > 0) {
+        setAccount(accounts[0]);
+        // Initialize contract with the new account
+        await initializeContract(accounts[0]);
+      }
+    } catch (err) {
+      console.error('Error connecting wallet:', err);
+      alert('Failed to connect wallet');
+    }
+  };
+
+  // Remove the loading state completely
+  // if (loading) { ... } - REMOVED
 
   if (error) {
     return (
@@ -194,97 +217,94 @@ function App() {
   }
 
   return (
-    <Router>
+    <Router basename="/artgallery">
       <div className="app-container">
-        {loading ? (
-          <LoadingPage />
-        ) : error ? (
-          <div className="error-page">
-            <div className="error-content">
-              <h2>Connection Error</h2>
-              <p>{error}</p>
-              <button className="btn-primary" onClick={() => window.location.reload()}>
-                Retry Connection
-              </button>
-            </div>
-          </div>
-        ) : (
-          <>
-            <Navigation 
-              account={account} 
-              isArtist={isArtist} 
-              artistName={artistName}
+        <Navigation 
+          account={account} 
+          isArtist={isArtist} 
+          artistName={artistName}
+          connectWallet={connectWallet}
+        />
+
+        <main>
+          <Routes>
+            <Route 
+              path="/" 
+              element={<Navigate to="/home" replace />}
             />
-
-            <main>
-              <Routes>
-                <Route 
-                  path="/" 
-                  element={
-                    <HomePage 
-                      account={account} 
-                      isArtist={isArtist} 
-                      artistName={artistName} 
-                      networkInfo={networkInfo}
-                    />
-                  } 
+            
+            <Route 
+              path="/home" 
+              element={
+                <HomePage 
+                  account={account} 
+                  isArtist={isArtist} 
+                  artistName={artistName} 
+                  networkInfo={networkInfo}
+                  connectWallet={connectWallet}
                 />
-                
-                <Route 
-                  path="/gallery" 
-                  element={
-                    <GalleryPage 
+              } 
+            />
+            
+            <Route 
+              path="/gallery" 
+              element={
+                <GalleryPage 
+                  contract={contract} 
+                  account={account} 
+                  isArtist={isArtist}
+                  connectWallet={connectWallet}
+                />
+              } 
+            />
+            
+            <Route 
+              path="/collection" 
+              element={
+                <MyCollectionPage 
+                  contract={contract} 
+                  account={account} 
+                  isArtist={isArtist}
+                  connectWallet={connectWallet}
+                />
+              } 
+            />
+            
+            <Route 
+              path="/register" 
+              element={
+                !account ? <Navigate to="/home" replace /> :
+                isArtist 
+                  ? <Navigate to="/upload" replace /> 
+                  : <RegisterPage 
                       contract={contract} 
                       account={account} 
-                      isArtist={isArtist} 
+                      setIsArtist={setIsArtist}
+                      setArtistName={setArtistName}
+                      connectWallet={connectWallet}
                     />
-                  } 
-                />
-                
-                <Route 
-                  path="/collection" 
-                  element={
-                    <MyCollectionPage 
+              } 
+            />
+            
+            <Route 
+              path="/upload" 
+              element={
+                !account ? <Navigate to="/home" replace /> :
+                !isArtist 
+                  ? <Navigate to="/register" replace /> 
+                  : <UploadPage 
                       contract={contract} 
-                      account={account} 
-                      isArtist={isArtist} 
+                      account={account}
+                      connectWallet={connectWallet}
                     />
-                  } 
-                />
-                
-                <Route 
-                  path="/register" 
-                  element={
-                    isArtist 
-                      ? <Navigate to="/upload" replace /> 
-                      : <RegisterPage 
-                          contract={contract} 
-                          account={account} 
-                          setIsArtist={setIsArtist}
-                          setArtistName={setArtistName}
-                        />
-                  } 
-                />
-                
-                <Route 
-                  path="/upload" 
-                  element={
-                    !isArtist 
-                      ? <Navigate to="/register" replace /> 
-                      : <UploadPage 
-                          contract={contract} 
-                          account={account}
-                        />
-                  } 
-                />
-                
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </main>
+              } 
+            />
+            
+            <Route path="*" element={<Navigate to="/home" replace />} />
+          </Routes>
+        </main>
 
-            <Footer />
-          </>
-        )}
+        <Footer />
       </div>
     </Router>
   );

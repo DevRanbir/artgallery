@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const HomePage = ({ account, isArtist, artistName, networkInfo }) => {
+const HomePage = ({ account, isArtist, artistName, networkInfo, connectWallet }) => {
   return (
     <div className="home-page">
       {/* Hero Section */}

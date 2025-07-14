@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
+import MetaMaskPrompt from './MetaMaskPrompt';
 
-const UploadArtwork = ({ contract, account }) => {
+const UploadArtwork = ({ contract, account, connectWallet }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
@@ -143,7 +144,12 @@ const UploadArtwork = ({ contract, account }) => {
         </p>
       </div>
 
-      {success ? (
+      {!account ? (
+        <MetaMaskPrompt 
+          connectWallet={connectWallet}
+          message="Connect your wallet to upload and sell your artwork"
+        />
+      ) : success ? (
         <div className="upload-success">
           <div className="success-content">
             <div className="success-icon">🎉</div>

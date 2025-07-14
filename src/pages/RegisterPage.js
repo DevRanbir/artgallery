@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import RegisterArtist from '../components/RegisterArtist';
 import '../styles/register.css';
 
-const RegisterPage = ({ contract, account, setIsArtist, setArtistName }) => {
+const RegisterPage = ({ contract, account, setIsArtist, setArtistName, connectWallet }) => {
   const navigate = useNavigate();
   
   // Callback for successful registration
@@ -42,6 +42,7 @@ const RegisterPage = ({ contract, account, setIsArtist, setArtistName }) => {
             setIsArtist={setIsArtist} 
             setArtistName={setArtistName}
             onSuccess={handleSuccessfulRegistration}
+            connectWallet={connectWallet}
           />
         </div>
       </div>
