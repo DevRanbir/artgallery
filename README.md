@@ -2,7 +2,7 @@
 
 > **A decentralized art marketplace where artists register, upload artwork metadata, and buyers can purchase or tip directly on the blockchain.**
 
-[![Deploy to GitHub Pages](https://github.com/DevRanbir/artgallery/actions/workflows/deploy.yml/badge.svg)](https://devranbir.github.io/artgallery)
+[Deployed Site](https://devranbir.github.io/artgallery)
 
 ## ✨ Features
 
